@@ -15,6 +15,7 @@ current_config = {
 @app.route('/', methods=['GET', 'POST'])
 def index():
     global producer, status, current_config
+    throughput_gb_min = 0
     if request.method == 'POST':
         action = request.form['action']
         if action == 'start':
@@ -38,12 +39,18 @@ def index():
                 producer.stop()
                 producer = None
             status = "Stopped"
-    return render_template('index.html', 
-                           status=status, 
-                           bootstrap_servers=current_config['bootstrap_servers'], 
-                           topic=current_config['topic'], 
-                           message_size_kb=current_config['message_size_kb'], 
-                           messages_per_second=current_config['messages_per_second'])
+
+    # Calculate throughput
+    bytes_per_second = current_config['messages_per_second'] * current_config['message_size_kb'] * 1024
+    throughput_gb_min = (bytes_per_second * 60) / (1024 * 1024 * 1024)
+
+    return render_template('index.html',
+                           status=status,
+                           bootstrap_servers=current_config['bootstrap_servers'],
+                           topic=current_config['topic'],
+                           message_size_kb=current_config['message_size_kb'],
+                           messages_per_second=current_config['messages_per_second'],
+                           throughput_gb_min=throughput_gb_min)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

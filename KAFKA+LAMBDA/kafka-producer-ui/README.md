@@ -4,10 +4,11 @@ A web-based Kafka producer application that can send high-volume messages to a K
 
 ## Features
 
-- Web UI to configure and control the producer
-- Configurable message size and rate
-- Start/Stop producer from the UI
-- Deployable on EC2 instances via Docker
+- **Beautiful Modern UI**: Sleek, responsive web interface with Bootstrap styling and animations
+- **Real-time Monitoring**: Live status updates and throughput calculations
+- **Configurable Settings**: Adjust message size and rate to meet your throughput requirements
+- **High Throughput**: Uses threading to send messages asynchronously without blocking the UI
+- **EC2 Ready**: Dockerized for easy deployment on EC2 instances
 
 ## Requirements
 

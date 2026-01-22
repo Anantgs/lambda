@@ -46,11 +46,20 @@ bin/kafka-topics.sh   --bootstrap-server b-1.testcluster.0b9dte.c25.kafka.us-eas
 bin/kafka-topics.sh   --bootstrap-server b-1.testcluster.0b9dte.c25.kafka.us-east-1.amazonaws.com:9092   --create   --topic test-topic   --partitions 3   --replication-factor 2
 ```
 
+**Note:** Always include the port number (typically :9092 for plaintext connections or :9094 for TLS/SSL connections to MSK)
+
 
 ### List topics
 ```
 bin/kafka-topics.sh   --bootstrap-server b-1.testcluster.0b9dte.c25.kafka.us-east-1.amazonaws.com:9092,b-2.testcluster.0b9dte.c25.kafka.us-east-1.amazonaws.com:9092   --list
 ```
+
+### Delete topic (removes all messages)
+```
+bin/kafka-topics.sh   --bootstrap-server b-1.testcluster.0b9dte.c25.kafka.us-east-1.amazonaws.com:9092   --delete   --topic test-topic
+```
+
+**Note:** Topic deletion must be enabled in broker configuration (`delete.topic.enable=true`). After deletion, you can recreate the topic with the create command above.
 
 ### Add message on Producer
 ```
