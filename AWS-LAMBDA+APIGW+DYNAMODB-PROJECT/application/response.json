@@ -1,0 +1,1 @@
+{"statusCode": 200, "headers": {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"}, "body": "{\"message\": \"Order received successfully\", \"orderId\": \"fa4acbde-c0d0-4a3d-9c02-8fcc58f769dd\", \"status\": \"PENDING\", \"timestamp\": \"2026-01-21T06:04:08.832435\", \"totalAmount\": \"0\"}"}

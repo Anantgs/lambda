@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kafka Producer UI</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        form { margin-bottom: 20px; }
+        input, button { margin: 5px; padding: 8px; }
+        .status { margin-top: 20px; padding: 10px; border: 1px solid #ccc; }
+    </style>
+</head>
+<body>
+    <h1>Kafka Message Producer</h1>
+    <form method="POST">
+        <label>Bootstrap Servers:</label><br>
+        <input type="text" name="bootstrap_servers" value="{{ bootstrap_servers }}" required><br>
+        <label>Topic:</label><br>
+        <input type="text" name="topic" value="{{ topic }}" required><br>
+        <label>Message Size (KB):</label><br>
+        <input type="number" name="message_size_kb" value="{{ message_size_kb }}" min="1" required><br>
+        <label>Messages per Second:</label><br>
+        <input type="number" name="messages_per_second" value="{{ messages_per_second }}" min="1" required><br>
+        <button type="submit" name="action" value="start">Start Producer</button>
+        <button type="submit" name="action" value="stop">Stop Producer</button>
+    </form>
+    <div class="status">
+        <strong>Status:</strong> {{ status }}
+    </div>
+</body>
+</html>
