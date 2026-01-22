@@ -2,6 +2,63 @@
 
 This folder contains resources for Kafka integration with AWS Lambda, including setup commands and a high-throughput Kafka producer application with UI.
 
+## Kafka Message Lifecycle in Production
+
+When you add messages to Kafka in a production environment, here's what happens:
+
+### 1. **Message Ingestion**
+- Producer sends messages to Kafka brokers
+- Messages are validated and assigned to partitions based on partition key (or round-robin if no key)
+- Acknowledgment sent back to producer based on `acks` setting
+
+### 2. **Storage & Partitioning**
+- Messages stored in topic partitions across broker nodes
+- Each partition is an ordered, immutable sequence of messages
+- Partitions distributed across brokers for load balancing
+
+### 3. **Replication**
+- Messages replicated to follower replicas (configurable replication factor)
+- Leader handles reads/writes, followers sync data
+- ISR (In-Sync Replicas) ensure data durability
+
+### 4. **Consumer Processing**
+- Consumers subscribe to topics and read from partitions
+- Consumer groups coordinate partition assignment
+- Offset tracking ensures exactly-once processing
+- Messages processed and committed
+
+### 5. **Retention & Cleanup**
+- Messages retained based on time or size policies
+- Old segments compacted or deleted
+- Log compaction for key-based deduplication
+
+### 6. **Monitoring & Operations**
+- Metrics collected for throughput, latency, errors
+- Alerts for broker failures, high latency, disk usage
+- Auto-rebalancing and self-healing capabilities
+For a detailed explanation of the complete Kafka message lifecycle in production, see [Kafka-Production-Lifecycle.md](Kafka-Production-Lifecycle.md).
+
+## Kafka Producer Application
+
+The `kafka-producer-ui` directory contains a web-based Kafka producer application capable of sending high-volume messages (up to 0.25 GB/minute).
+
+## Kafka Consumer Application
+
+The `kafka-consumer-ui` directory contains a web-based Kafka consumer application for real-time message consumption and monitoring. Features include:
+
+- Live message consumption with statistics
+- Event type analysis and distribution
+- Recent message display with metadata
+- Real-time performance monitoring
+- Beautiful UI matching the producer application
+
+## Integration Example
+
+1. **Start Producer**: Run `kafka-producer-ui` to send test messages
+2. **Start Consumer**: Run `kafka-consumer-ui` to view consumed messages
+3. **Monitor Pipeline**: Watch real-time statistics on both producer and consumer sides
+4. **Test Scenarios**: Validate end-to-end message flow and processing
+
 ## Kafka Setup
 
 Refer to [Commands.md](Commands.md) for detailed instructions on installing and configuring Kafka on EC2 instances, including connectivity to AWS MSK clusters.
