@@ -47,9 +47,10 @@ The `kafka-producer-ui` directory contains a web-based Kafka producer applicatio
 The `kafka-consumer-ui` directory contains a web-based Kafka consumer application for real-time message consumption and monitoring. Features include:
 
 - Live message consumption with statistics
+- Multi-topic support (consume from multiple topics simultaneously)
 - Event type analysis and distribution
 - Recent message display with metadata
-- Real-time performance monitoring
+- Real-time performance monitoring per topic
 - Beautiful UI matching the producer application
 
 ## Integration Example

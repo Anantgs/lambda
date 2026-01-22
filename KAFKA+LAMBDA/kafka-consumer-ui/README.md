@@ -6,9 +6,10 @@ A beautiful web-based Kafka consumer application that displays real-time message
 
 - **Beautiful Modern UI**: Sleek, responsive web interface with Bootstrap styling and animations
 - **Real-time Monitoring**: Live message consumption with auto-refresh
-- **Statistics Dashboard**: Track consumption rate, event types, and performance metrics
-- **Message Display**: View recent messages with detailed metadata
-- **Event Type Analysis**: Visualize distribution of different event types
+- **Multi-Topic Support**: Consume from multiple Kafka topics simultaneously
+- **Statistics Dashboard**: Track consumption rate, event types, and performance metrics per topic
+- **Message Display**: View recent messages with detailed metadata from all topics
+- **Event Type Analysis**: Visualize distribution of different event types across topics
 - **Consumer Group Support**: Configure custom consumer group IDs
 - **EC2 Ready**: Dockerized for easy deployment on EC2 instances
 
@@ -72,15 +73,17 @@ The consumer UI consists of:
 ## Configuration
 
 - **Bootstrap Servers**: Comma-separated list of Kafka brokers
-- **Topic Name**: The Kafka topic to consume from
+- **Topic Names**: Comma-separated list of Kafka topics to consume from (e.g., `topic1, topic2, topic3`)
 - **Consumer Group ID**: Unique identifier for the consumer group (optional)
 
 ## Features Overview
 
 ### Real-time Statistics
-- **Total Messages Consumed**: Running count of processed messages
+- **Total Messages Consumed**: Running count of processed messages across all topics
 - **Consumption Rate**: Messages per second (updated every 5 seconds)
 - **Runtime**: How long the consumer has been running
+- **Topics Consumed**: Number of active topics being consumed
+- **Per-Topic Counts**: Message counts broken down by individual topic
 - **Event Types**: Count of different event types encountered
 
 ### Message Display
@@ -96,10 +99,13 @@ The consumer UI consists of:
 ## Usage
 
 1. Enter your Kafka configuration in the web form
-2. Click "Start Consumer" to begin consuming messages
-3. Monitor the real-time statistics and message flow
-4. View detailed message information in the recent messages panel
-5. Click "Stop Consumer" to halt consumption
+2. For **Topic Names**, enter comma-separated topic names (e.g., `user-events, order-events, audit-logs`)
+3. Click "Start Consumer" to begin consuming messages from all specified topics
+4. Monitor the real-time statistics and message flow across all topics
+5. View detailed message information in the recent messages panel
+6. Click "Stop Consumer" to halt consumption
+
+The consumer will subscribe to all specified topics and display messages from all of them in a unified view.
 
 ## API Endpoints
 

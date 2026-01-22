@@ -8,7 +8,7 @@ consumer = None
 status = "Stopped"
 current_config = {
     'bootstrap_servers': '',
-    'topic': '',
+    'topics': [],
     'group_id': 'kafka-consumer-ui'
 }
 
@@ -24,11 +24,13 @@ def index():
                 status = "Already running"
             else:
                 current_config['bootstrap_servers'] = request.form['bootstrap_servers']
-                current_config['topic'] = request.form['topic']
+                topics_input = request.form['topics']
+                # Split by comma and strip whitespace
+                current_config['topics'] = [topic.strip() for topic in topics_input.split(',') if topic.strip()]
                 current_config['group_id'] = request.form['group_id']
                 consumer = KafkaMessageConsumer(
                     current_config['bootstrap_servers'],
-                    current_config['topic'],
+                    current_config['topics'],
                     current_config['group_id']
                 )
                 consumer.start()
@@ -42,10 +44,10 @@ def index():
     if consumer and consumer.running:
         stats = consumer.get_stats()
 
-    return render_template('index.html',
+return render_template('index.html',
                            status=status,
                            bootstrap_servers=current_config['bootstrap_servers'],
-                           topic=current_config['topic'],
+                           topics=', '.join(current_config['topics']),
                            group_id=current_config['group_id'],
                            stats=stats)
 

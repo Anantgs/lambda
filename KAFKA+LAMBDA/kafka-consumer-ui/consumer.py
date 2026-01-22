@@ -9,19 +9,24 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class KafkaMessageConsumer:
-    def __init__(self, bootstrap_servers, topic, group_id='kafka-consumer-ui'):
+    def __init__(self, bootstrap_servers, topics, group_id='kafka-consumer-ui'):
+        # topics can be a string (single topic) or list (multiple topics)
+        if isinstance(topics, str):
+            self.topics = [topics]
+        else:
+            self.topics = topics
         self.bootstrap_servers = bootstrap_servers
-        self.topic = topic
         self.group_id = group_id
         self.consumer = None
         self.running = False
         self.thread = None
 
-        # Statistics
+        # Statistics per topic
         self.messages_consumed = 0
         self.messages_per_second = 0
+        self.topic_message_counts = defaultdict(int)
         self.event_type_counts = defaultdict(int)
-        self.recent_messages = deque(maxlen=100)  # Keep last 100 messages
+        self.recent_messages = deque(maxlen=100)
         self.start_time = None
         self.last_calc_time = time.time()
 
@@ -30,7 +35,7 @@ class KafkaMessageConsumer:
             return
         self.running = True
         self.consumer = KafkaConsumer(
-            self.topic,
+            *self.topics,  # Unpack topics list
             bootstrap_servers=self.bootstrap_servers,
             group_id=self.group_id,
             auto_offset_reset='latest',
@@ -56,7 +61,9 @@ class KafkaMessageConsumer:
                     break
 
                 self.messages_consumed += 1
-                message_data = message.value
+                # Track messages per topic
+                topic_name = message.topic
+                self.topic_message_counts[topic_name] += 1
 
                 # Track event types
                 if 'event_type' in message_data:
@@ -64,6 +71,7 @@ class KafkaMessageConsumer:
 
                 # Add to recent messages
                 message_display = {
+                    'topic': topic_name,
                     'id': message_data.get('id', 'N/A'),
                     'timestamp': message_data.get('timestamp', 'N/A'),
                     'event_type': message_data.get('event_type', 'N/A'),
@@ -92,6 +100,8 @@ class KafkaMessageConsumer:
             'messages_consumed': self.messages_consumed,
             'messages_per_second': round(self.messages_per_second, 2),
             'runtime_seconds': round(runtime, 1),
+            'topics_consumed': len(self.topics),
+            'topic_message_counts': dict(self.topic_message_counts),
             'event_type_counts': dict(self.event_type_counts),
             'recent_messages': list(self.recent_messages)[-10:]  # Last 10 messages
         }
