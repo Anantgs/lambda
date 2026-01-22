@@ -3,6 +3,8 @@ import time
 import threading
 import random
 import string
+import json
+from datetime import datetime
 
 class KafkaMessageProducer:
     def __init__(self, bootstrap_servers, topic, message_size_kb=1, messages_per_second=1000):
@@ -13,6 +15,7 @@ class KafkaMessageProducer:
         self.producer = None
         self.running = False
         self.thread = None
+        self.message_count = 0
 
     def start(self):
         if self.running:
@@ -44,5 +47,24 @@ class KafkaMessageProducer:
             time.sleep(sleep_time)
 
     def _generate_message(self, size):
-        # Generate a random message of given size
-        return ''.join(random.choices(string.ascii_letters + string.digits, k=size))
+        self.message_count += 1
+        # Generate a meaningful JSON message
+        data = {
+            "id": self.message_count,
+            "timestamp": datetime.now().isoformat(),
+            "event_type": random.choice(["user_login", "purchase", "page_view", "error", "signup"]),
+            "user_id": random.randint(1000, 9999),
+            "message": f"Event {self.message_count} occurred",
+            "details": {
+                "ip_address": f"192.168.{random.randint(1,255)}.{random.randint(1,255)}",
+                "user_agent": "Mozilla/5.0 (compatible; KafkaProducer/1.0)",
+                "session_id": ''.join(random.choices(string.ascii_letters + string.digits, k=16))
+            }
+        }
+        json_str = json.dumps(data)
+        # If the JSON is smaller than required size, pad with additional data
+        if len(json_str) < size:
+            padding_size = size - len(json_str)
+            data["padding"] = ''.join(random.choices(string.ascii_letters + string.digits, k=padding_size))
+            json_str = json.dumps(data)
+        return json_str
