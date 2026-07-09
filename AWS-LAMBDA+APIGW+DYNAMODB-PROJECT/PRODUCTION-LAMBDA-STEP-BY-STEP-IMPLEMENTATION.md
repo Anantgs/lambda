@@ -55,32 +55,95 @@ In production, logs help you understand what happened inside Lambda.
 
 ## Step 2: Add Logs
 
-At the top, make sure `json` is imported:
+
+
+Inside `lambda_handler`, add logs like this (add it as it is):
 
 ```python
 import json
-```
+import boto3
+import uuid
+from datetime import datetime
+from decimal import Decimal
 
-Inside `lambda_handler`, add logs like this:
+dynamodb = boto3.resource('dynamodb')
+orders_table = dynamodb.Table('orders')
 
-```python
 def lambda_handler(event, context):
     try:
         print("START order-intake")
         print(f"AWS Request ID: {context.aws_request_id}")
         print(f"Received event: {json.dumps(event)}")
 
-        # existing code here
+        if isinstance(event.get('body'), str):
+            body = json.loads(event['body'])
+        else:
+            body = event.get('body', {})
+
+        order_id = str(uuid.uuid4())
+        timestamp = datetime.utcnow().isoformat()
+
+        items = []
+        total_amount = Decimal('0')
+
+        for item in body.get('items', []):
+            qty = Decimal(str(item.get('qty', 0)))
+            price = Decimal(str(item.get('price', 0)))
+
+            items.append({
+                'productId': item.get('productId', ''),
+                'qty': qty,
+                'price': price
+            })
+
+            total_amount += qty * price
+
+        order_item = {
+            'orderId': order_id,
+            'timestamp': timestamp,
+            'items': items,
+            'paymentMethod': body.get('paymentMethod', 'card'),
+            'customerEmail': body.get('customerEmail', 'unknown@example.com'),
+            'status': 'PENDING',
+            'totalAmount': total_amount
+        }
+
+        print(f"Storing order: {json.dumps(order_item, default=str)}")
 
         print("Saving order to DynamoDB")
         orders_table.put_item(Item=order_item)
         print(f"Order saved successfully: {order_id}")
 
-        # existing response here
+        return {
+            'statusCode': 200,
+            'headers': {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            'body': json.dumps({
+                'message': 'Order received successfully',
+                'orderId': order_id,
+                'status': 'PENDING',
+                'timestamp': timestamp,
+                'totalAmount': str(total_amount)
+            })
+        }
 
     except Exception as e:
         print(f"ERROR in order-intake: {str(e)}")
-        raise
+        import traceback
+        traceback.print_exc()
+
+        return {
+            'statusCode': 500,
+            'headers': {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            'body': json.dumps({
+                'error': str(e)
+            })
+        }
 ```
 
 If you do not want to raise the error, keep your existing `return statusCode 500` block. For learning, raising once is useful because CloudWatch shows the failure clearly.

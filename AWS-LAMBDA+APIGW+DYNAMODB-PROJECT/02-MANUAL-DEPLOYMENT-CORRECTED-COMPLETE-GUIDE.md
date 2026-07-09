@@ -256,7 +256,7 @@ def lambda_handler(event, context):
 2. Click **"Create resource"**
 3. **Fill in:**
    - **Resource name**: `orders`
-   - **Resource path**: `/orders`
+   - **Resource path**: `/`
    - **CORS**: Leave unchecked
 4. Click **"Create resource"**
 
