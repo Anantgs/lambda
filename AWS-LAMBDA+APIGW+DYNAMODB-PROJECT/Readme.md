@@ -219,3 +219,16 @@ This project shows how **a simple client application can trigger powerful backen
 **Author:** Your Name
 **Purpose:** Learning & understanding serverless architecture
  
+---
+
+## Production Lambda Concepts
+
+After the basic setup is working, continue with [Production Lambda Concepts To Learn Next](./PRODUCTION-LAMBDA-CONCEPTS.md). This covers CloudWatch logging, cold start, timeout, memory, concurrency, retry behavior, idempotency, versioning, and cost awareness.
+
+
+---
+
+## Step By Step Production Implementation
+
+For hands-on AWS Console practice, follow [Production Lambda Step By Step Implementation](./PRODUCTION-LAMBDA-STEP-BY-STEP-IMPLEMENTATION.md).
+
